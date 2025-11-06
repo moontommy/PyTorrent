@@ -1,0 +1,27 @@
+[Unit]
+Description=PyTorrent
+After=network.target
+
+[Service]
+Type=simple
+User=pytorrent
+Group=pytorrent
+WorkingDirectory=/opt/pytorrent
+
+# Environment variables
+Environment=DOWNLOAD_DIR=/var/lib/pytorrent/downloads
+Environment=TORRENT_DIR=/var/lib/pytorrent/torrents
+Environment=PYTHONUNBUFFERED=1
+Environment=FLASK_ENV=production
+
+ExecStart=/usr/bin/python3 /opt/pytorrent/app.py
+Restart=on-failure
+RestartSec=5
+
+# Limit privileges for security
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

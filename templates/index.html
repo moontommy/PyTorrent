@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyTorrent</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+    h1 { text-align: center; }
+    form { margin-bottom: 1em; }
+    .progress { background: #ddd; border-radius: 5px; height: 20px; overflow: hidden; }
+    .bar { background: #28a745; height: 100%; width: 0%; transition: width 0.5s; }
+  </style>
+  <script>
+    async function refreshStatus() {
+      const res = await fetch('/status');
+      const data = await res.json();
+      document.getElementById('progress').style.width = data.progress + '%';
+      document.getElementById('text').textContent =
+        `Progress: ${data.progress.toFixed(2)}% | DL: ${data.download_rate.toFixed(1)} kB/s | UL: ${data.upload_rate.toFixed(1)} kB/s | Peers: ${data.peers}`;
+    }
+    setInterval(refreshStatus, 1000);
+  </script>
+</head>
+<body>
+  <img src="{{ url_for('static', filename='img/pytorrent-logo.webp') }}" alt="PyTorrent Logo" style="width:256px; margin:1em auto; display:block;" />
+  <h1>PyTorrent</h1>
+
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <label>Upload .torrent file:</label><br />
+    <input type="file" name="torrent_file" accept=".torrent" />
+    <button type="submit">Start Download</button>
+  </form>
+
+  <form action="/upload" method="post">
+    <label>Or paste Magnet URL:</label><br />
+    <input type="text" name="magnet_url" style="width:100%" />
+    <button type="submit">Start Download</button>
+  </form>
+
+  <div class="progress"><div id="progress" class="bar"></div></div>
+  <p id="text">Waiting...</p>
+</body>
+</html>
